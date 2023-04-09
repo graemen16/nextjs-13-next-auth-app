@@ -1,36 +1,26 @@
+//"use client"
 import styles from "./header.module.css"
 import { SignIn, SignOut } from "./actions"
-import { unstable_getServerSession } from "next-auth/next"
+import { getServerSession } from "next-auth/next"
+import { getCurrentUser, getSession } from "./session"
+import { UserBar } from "./user-bar"
 
 export default async function Header() {
-  const session = await unstable_getServerSession()
-
+  //const session = await getServerSession()
+  //const session = getSession()
+  const user = await getCurrentUser()
+  //const promise = getSession()
+  
   return (
     <header className={styles.signedInStatus}>
       <div className={styles.loaded}>
-        {session?.user ? (
-          <>
-            {session.user.image && (
-              <span
-                style={{ backgroundImage: `url('${session.user.image}')` }}
-                className={styles.avatar}
-              />
-            )}
-            <span className={styles.signedInText}>
-              <small>Signed in as</small>
-              <br />
-              <strong>{session.user.email ?? session.user.name}</strong>
-            </span>
-            <SignOut />
-          </>
-        ) : (
-          <>
-            <span className={styles.notSignedInText}>
-              You are not signed in
-            </span>
-            <SignIn />
-          </>
-        )}
+      <UserBar
+            user={{
+              name: user?.name,
+              image: user?.image,
+              email: user?.email,
+            }}
+        />
       </div>
     </header>
   )
